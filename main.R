@@ -25,3 +25,16 @@ data <- data.frame(
 train_idx <- sample(1:nrow(data), 0.8*nrow(data))
 training <- data[train_idx, ]
 testing <- data[-train_idx, ]
+
+# Train a random forest model
+rf_model <- randomForest(reward ~ state + action, data=training, ntree=100)
+
+# Evaluate the model
+predictions <- predict(rf_model, testing)
+actuals <- testing$reward
+mean((predictions - actuals)^2) # Calculate mean squared error
+
+
+
+
+
