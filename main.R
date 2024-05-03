@@ -34,7 +34,3 @@ predictions <- predict(rf_model, testing)
 actuals <- testing$reward
 mean((predictions - actuals)^2) # Calculate mean squared error
 
-
-
-
-
