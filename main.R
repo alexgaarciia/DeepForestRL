@@ -7,7 +7,7 @@
 ################################################################################
 
 # Load necessary packages
-install.packages("randomForest")
+if (!require('randomForest')) install.packages('randomForest')
 library(randomForest)
 
 # STEP 1: Define and initialize the grid world setup
