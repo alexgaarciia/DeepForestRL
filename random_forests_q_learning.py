@@ -16,6 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # REPLAY MEMORY
 Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
 
+
 class ReplayMemory:
     def __init__(self, capacity):
         self.memory = deque([], maxlen=capacity)
@@ -29,6 +30,7 @@ class ReplayMemory:
 
     def __len__(self):
         return len(self.memory)
+
 
 # Random Forest Q-Learning Model
 class RandomForestQ:
@@ -45,6 +47,7 @@ class RandomForestQ:
             return self.model.predict(X)
         else:
             return np.zeros((X.shape[0], 2))
+
 
 # TRAINING PARAMETERS
 BATCH_SIZE = 128
@@ -63,6 +66,7 @@ target_net = RandomForestQ()
 memory = ReplayMemory(10000)
 steps_done = 0
 
+
 def select_action(state):
     global steps_done
     sample = random.random()
@@ -76,13 +80,15 @@ def select_action(state):
     else:
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
 
+
 def optimize_model():
     if len(memory) < BATCH_SIZE:
         return
     transitions = memory.sample(BATCH_SIZE)
     batch = Transition(*zip(*transitions))
 
-    non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, batch.next_state)), device=device, dtype=torch.bool)
+    non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, batch.next_state)), device=device,
+                                  dtype=torch.bool)
     non_final_next_states = torch.cat([s for s in batch.next_state if s is not None])
     state_batch = torch.cat(batch.state)
     action_batch = torch.cat(batch.action)
@@ -100,6 +106,7 @@ def optimize_model():
     y = expected_state_action_values
 
     policy_net.fit(X, y)
+
 
 # Main training loop
 if torch.cuda.is_available():
